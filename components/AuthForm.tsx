@@ -9,25 +9,50 @@ import { authFormSchema } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof authFormSchema>>({
-    resolver: zodResolver(authFormSchema),
+  const formSchema = authFormSchema(type);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof authFormSchema>) {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     setIsLoading(true);
     console.log(data);
-    setIsLoading(false);
-  }
+    try {
+      // Sign up with AppWrite and create a plaid link token
+      if (type === "sign-up") {
+        // const newUser = await signUp(data);
+        // setUser(newUser);
+      }
+
+      if (type === "sign-in") {
+        // const response = await signIn({
+        //   email: data.email,
+        //   password: data.password,
+        // });
+        // if (response) {
+        //   router.push("/");
+        // }
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <section className="auth-form">
       <header className="flex flex-col gap-5 md:gap-8">
@@ -59,6 +84,70 @@ const AuthForm = ({ type }: { type: string }) => {
       ) : (
         <>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {type === "sign-up" && (
+              <>
+                <div className="flex gap-4">
+                  <CustomInput
+                    control={form.control}
+                    name="firstName"
+                    label="First Name"
+                    placeholder="Ex: John"
+                  />
+
+                  <CustomInput
+                    control={form.control}
+                    name="lastName"
+                    label="Last Name"
+                    placeholder="Ex: Doe"
+                  />
+                </div>
+
+                <CustomInput
+                  control={form.control}
+                  name="address"
+                  label="Address"
+                  placeholder="Enter your specific address"
+                />
+
+                <CustomInput
+                  control={form.control}
+                  name="city"
+                  label="City"
+                  placeholder="Enter your city"
+                />
+
+                <div className="flex gap-4">
+                  <CustomInput
+                    control={form.control}
+                    name="state"
+                    label="State"
+                    placeholder="Ex: NY"
+                  />
+
+                  <CustomInput
+                    control={form.control}
+                    name="postalCode"
+                    label="Postal Code"
+                    placeholder="Ex: 11101"
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <CustomInput
+                    control={form.control}
+                    name="dateOfBirth"
+                    label="Date of Birth"
+                    placeholder="yyyy-mm-dd"
+                  />
+
+                  <CustomInput
+                    control={form.control}
+                    name="ssn"
+                    label="SSN"
+                    placeholder="Ex: 1234"
+                  />
+                </div>
+              </>
+            )}
             <CustomInput
               control={form.control}
               name="email"
