@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${inter.variable} ${ibmPlexSerif.variable}`}
+        className={`${geistSans.variable} ${inter.variable} ${ibmPlexSerif.variable} ${geistMono.variable}`}
       >
         {children}
       </body>
