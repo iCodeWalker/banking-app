@@ -4,9 +4,13 @@ import { ID } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { parseStringify } from "../utils";
 import { cookies } from "next/headers";
+import { email } from "zod";
 
-export const signIn = async () => {
+export const signIn = async ({ email, password }: signInProps) => {
   try {
+    const { account } = await createAdminClient();
+    const response = await account.createEmailPasswordSession(email, password);
+    return parseStringify(response);
   } catch (error) {
     console.log(error);
   }
@@ -43,8 +47,6 @@ export const signUp = async (userData: SignUpParams) => {
   }
 };
 
-// ... your initilization functions
-
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
@@ -54,3 +56,11 @@ export async function getLoggedInUser() {
     return null;
   }
 }
+
+export const signOut = async () => {
+  try {
+    const { account } = await createSessionClient();
+    (await cookies()).delete("appwrite-session");
+    await account.deleteSession({ sessionId: "current" });
+  } catch (err) {}
+};
