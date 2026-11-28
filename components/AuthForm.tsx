@@ -34,8 +34,8 @@ const AuthForm = ({ type }: { type: string }) => {
     try {
       // Sign up with AppWrite and create a plaid link token
       if (type === "sign-up") {
-        // const newUser = await signUp(data);
-        // setUser(newUser);
+        const newUser = await signUp(data);
+        setUser(newUser);
       }
 
       if (type === "sign-in") {
